@@ -1,24 +1,128 @@
-# Compiled class file
-*.class
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        .game-board {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-# Log file
-*.log
+        .row {
+            display: flex;
+        }
 
-# BlueJ files
-*.ctxt
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+        .winning-cell {
+            background-color: #ff0000; /* red background for winning cell */
+        }
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+        .x {
+            color: #0000ff; /* blue color for X */
+        }
+
+        .o {
+            color: #ffff00; /* yellow color for O */
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="game-board">
+        <div class="row">
+            <div class="cell" id="cell-1"></div>
+            <div class="cell" id="cell-2"></div>
+            <div class="cell" id="cell-3"></div>
+        </div>
+        <div class="row">
+            <div class="cell" id="cell-4"></div>
+            <div class="cell" id="cell-5"></div>
+            <div class="cell" id="cell-6"></div>
+        </div>
+        <div class="row">
+            <div class="cell" id="cell-7"></div>
+            <div class="cell" id="cell-8"></div>
+            <div class="cell" id="cell-9"></div>
+        </div>
+    </div>
+    <script>
+        let currentPlayer = 'X';
+        let gameBoard = [];
+        let gameOver = false;
+
+        // Initialize game board
+        for (let i = 1; i <= 9; i++) {
+            gameBoard.push(document.getElementById(`cell-${i}`));
+        }
+
+        // Add event listeners to cells
+        gameBoard.forEach(cell => {
+            cell.addEventListener('click', handleCellClick);
+        });
+
+        function handleCellClick(event) {
+            if (gameOver) return;
+            const cell = event.target;
+            if (cell.textContent === '') {
+                cell.textContent = currentPlayer;
+                cell.classList.add(currentPlayer.toLowerCase()); // add class for X or O
+                checkForWin();
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+
+        function checkForWin() {
+            const winningCombinations = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+
+            for (let i = 0; i < winningCombinations.length; i++) {
+                const combination = winningCombinations[i];
+                if (gameBoard[combination[0]].textContent === gameBoard[combination[1]].textContent &&
+                    gameBoard[combination[1]].textContent === gameBoard[combination[2]].textContent &&
+                    gameBoard[combination[0]].textContent !== '') {
+                    alert(`Player ${gameBoard[combination[0]].textContent} wins!`);
+                    gameOver = true;
+                    highlightWinningCells(combination);
+                    return;
+                }
+            }
+
+            if (gameBoard.every(cell => cell.textContent !== '')) {
+                alert('It\'s a draw!');
+                gameOver = true;
+            }
+        }
+
+        function highlightWinningCells(combination) {
+            for (let i = 0; i < combination.length; i++) {
+                gameBoard[combination[i]].classList.add('winning-cell');
+            }
+        }
+    </script>
+</body>
+</html>
